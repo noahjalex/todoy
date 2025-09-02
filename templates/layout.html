@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - Todo App</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom animations for HTMX */
+        .htmx-indicator {
+            opacity: 0;
+            transition: opacity 200ms ease-in;
+        }
+        .htmx-request .htmx-indicator {
+            opacity: 1;
+        }
+        .htmx-request.htmx-indicator {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 text-center">Todo List App</h1>
+            <nav class="mt-4 text-center">
+                <a href="/" class="text-blue-600 hover:text-blue-800 mx-2">Home</a>
+                <a href="/todos/new" class="text-blue-600 hover:text-blue-800 mx-2">Add Todo</a>
+            </nav>
+        </header>
+        
+        <main>
+            {{template "content" .}}
+        </main>
+    </div>
+    
+    <!-- Loading indicator -->
+    <div id="loading" class="htmx-indicator fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
+        Loading...
+    </div>
+</body>
+</html>
