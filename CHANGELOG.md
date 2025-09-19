@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.1] - 2025-09-19
+
 ### Fixed
 - Templates now properly embedded in binary for all platforms
 - Resolved issue where binaries couldn't find template files
