@@ -1,6 +1,32 @@
-# Todo List CRUD App
+# Todoy - Todo List CRUD App
 
 A simple Golang CRUD application for managing todo tasks with HTML templates, MySQL database, HTMX for dynamic interactions, and Tailwind CSS for styling.
+
+## Installation
+
+### Download Pre-built Binaries
+
+Download the latest release for your platform from the [Releases page](https://github.com/noahjalex/todoy/releases):
+
+- **Linux (x64)**: `todoy-linux-amd64`
+- **Linux (ARM64)**: `todoy-linux-arm64`
+- **macOS (Intel)**: `todoy-darwin-amd64`
+- **macOS (Apple Silicon)**: `todoy-darwin-arm64`
+- **Windows (x64)**: `todoy-windows-amd64.exe`
+
+Make the binary executable (Linux/macOS):
+```bash
+chmod +x todoy-*
+```
+
+### Build from Source
+
+Alternatively, build from source if you have Go installed:
+```bash
+git clone https://github.com/noahjalex/todoy.git
+cd todoy
+go build -o todoy main.go
+```
 
 ## Features
 
@@ -158,6 +184,25 @@ go build -o todoapp main.go
 # Run binary
 ./todoapp
 ```
+
+## Releases
+
+This project uses semantic versioning and automated releases via GitHub Actions.
+
+### Creating a Release
+
+1. Update the `CHANGELOG.md` file with your changes
+2. Use the release script:
+   ```bash
+   ./scripts/release.sh v1.0.0
+   ```
+3. The GitHub Action will automatically build binaries for all platforms and create a release
+
+### Version Management
+
+- Version information is embedded in the binary during build
+- The application displays the version on startup
+- Releases follow semantic versioning (MAJOR.MINOR.PATCH)
 
 ## License
 

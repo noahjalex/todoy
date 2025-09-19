@@ -13,6 +13,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// Version is set during build time
+var Version = "dev"
+
 func main() {
 	// Database configuration
 	dbUser := getEnv("DB_USER", "root")
@@ -92,7 +95,7 @@ func main() {
 
 	// Start server
 	port := getEnv("PORT", "8080")
-	fmt.Printf("Server starting on port %s...\n", port)
+	fmt.Printf("Todoy v%s - Server starting on port %s...\n", Version, port)
 	fmt.Printf("Visit http://localhost:%s to view the application\n", port)
 
 	// Add request logging middleware

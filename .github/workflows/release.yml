@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24'
+    
+    - name: Get version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+    
+    - name: Build binaries
+      run: |
+        # Build for multiple platforms
+        GOOS=linux GOARCH=amd64 go build -ldflags="-X main.Version=${{ steps.version.outputs.VERSION }}" -o todoy-linux-amd64 main.go
+        GOOS=linux GOARCH=arm64 go build -ldflags="-X main.Version=${{ steps.version.outputs.VERSION }}" -o todoy-linux-arm64 main.go
+        GOOS=darwin GOARCH=amd64 go build -ldflags="-X main.Version=${{ steps.version.outputs.VERSION }}" -o todoy-darwin-amd64 main.go
+        GOOS=darwin GOARCH=arm64 go build -ldflags="-X main.Version=${{ steps.version.outputs.VERSION }}" -o todoy-darwin-arm64 main.go
+        GOOS=windows GOARCH=amd64 go build -ldflags="-X main.Version=${{ steps.version.outputs.VERSION }}" -o todoy-windows-amd64.exe main.go
+        
+        # Create checksums
+        sha256sum todoy-* > checksums.txt
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          todoy-linux-amd64
+          todoy-linux-arm64
+          todoy-darwin-amd64
+          todoy-darwin-arm64
+          todoy-windows-amd64.exe
+          checksums.txt
+        generate_release_notes: true
+        draft: false
+        prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
