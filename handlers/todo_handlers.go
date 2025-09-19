@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"io/fs"
 	"net/http"
 	"strconv"
 	"strings"
@@ -13,10 +14,10 @@ type TodoHandler struct {
 }
 
 // NewTodoHandler creates a new TodoHandler instance
-func NewTodoHandler(todoModel *models.TodoModel) *TodoHandler {
+func NewTodoHandler(todoModel *models.TodoModel, templateFS fs.FS) *TodoHandler {
 	return &TodoHandler{
 		TodoModel:       todoModel,
-		TemplateManager: NewTemplateManager(),
+		TemplateManager: NewTemplateManager(templateFS),
 	}
 }
 

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 	"time"
@@ -20,14 +21,16 @@ type TemplateData struct {
 
 // TemplateManager handles all template operations
 type TemplateManager struct {
-	templates map[string]*template.Template
-	funcMap   template.FuncMap
+	templates  map[string]*template.Template
+	funcMap    template.FuncMap
+	templateFS fs.FS
 }
 
 // NewTemplateManager creates a new template manager with common functions
-func NewTemplateManager() *TemplateManager {
+func NewTemplateManager(templateFS fs.FS) *TemplateManager {
 	tm := &TemplateManager{
-		templates: make(map[string]*template.Template),
+		templates:  make(map[string]*template.Template),
+		templateFS: templateFS,
 	}
 
 	// Define common template functions
@@ -89,24 +92,43 @@ func NewTemplateManager() *TemplateManager {
 	return tm
 }
 
-// loadTemplates loads and parses all templates
+// loadTemplates loads and parses all templates from embedded filesystem
 func (tm *TemplateManager) loadTemplates() {
 	var err error
 
-	// Parse templates with the common function map
-	tm.templates["index"], err = template.New("layout.html").Funcs(tm.funcMap).ParseFiles("templates/layout.html", "templates/index.html")
-	if err != nil {
-		panic("Error loading index template: " + err.Error())
-	}
+	// Try to use embedded filesystem first, fall back to local files for development
+	if tm.templateFS != nil {
+		// Parse templates from embedded filesystem with the common function map
+		tm.templates["index"], err = template.New("layout.html").Funcs(tm.funcMap).ParseFS(tm.templateFS, "templates/layout.html", "templates/index.html")
+		if err != nil {
+			panic("Error loading index template: " + err.Error())
+		}
 
-	tm.templates["create"], err = template.New("layout.html").Funcs(tm.funcMap).ParseFiles("templates/layout.html", "templates/create.html")
-	if err != nil {
-		panic("Error loading create template: " + err.Error())
-	}
+		tm.templates["create"], err = template.New("layout.html").Funcs(tm.funcMap).ParseFS(tm.templateFS, "templates/layout.html", "templates/create.html")
+		if err != nil {
+			panic("Error loading create template: " + err.Error())
+		}
 
-	tm.templates["edit"], err = template.New("layout.html").Funcs(tm.funcMap).ParseFiles("templates/layout.html", "templates/edit.html")
-	if err != nil {
-		panic("Error loading edit template: " + err.Error())
+		tm.templates["edit"], err = template.New("layout.html").Funcs(tm.funcMap).ParseFS(tm.templateFS, "templates/layout.html", "templates/edit.html")
+		if err != nil {
+			panic("Error loading edit template: " + err.Error())
+		}
+	} else {
+		// Fall back to local files for development
+		tm.templates["index"], err = template.New("layout.html").Funcs(tm.funcMap).ParseFiles("templates/layout.html", "templates/index.html")
+		if err != nil {
+			panic("Error loading index template: " + err.Error())
+		}
+
+		tm.templates["create"], err = template.New("layout.html").Funcs(tm.funcMap).ParseFiles("templates/layout.html", "templates/create.html")
+		if err != nil {
+			panic("Error loading create template: " + err.Error())
+		}
+
+		tm.templates["edit"], err = template.New("layout.html").Funcs(tm.funcMap).ParseFiles("templates/layout.html", "templates/edit.html")
+		if err != nil {
+			panic("Error loading edit template: " + err.Error())
+		}
 	}
 }
 

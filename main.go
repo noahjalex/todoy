@@ -52,7 +52,7 @@ func main() {
 	}
 
 	// Initialize handlers
-	todoHandler := handlers.NewTodoHandler(todoModel)
+	todoHandler := handlers.NewTodoHandler(todoModel, TemplateFS)
 
 	// Set up routes
 	mux := http.NewServeMux()
